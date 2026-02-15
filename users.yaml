@@ -1,0 +1,6 @@
+admin:
+  role: administrator
+guest:
+  role: user
+support:
+  role: administrator
