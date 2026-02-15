@@ -10,10 +10,14 @@ A simple web-service for testing purposes.
 from datetime import datetime, timedelta
 
 import uvicorn
+import yaml
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from current_date import get_date
+
+with open("users.yaml") as f:
+    users = yaml.safe_load(f)
 
 
 class UserData(BaseModel):
@@ -22,7 +26,6 @@ class UserData(BaseModel):
     """
 
     username: str
-    role: str
 
 
 app = FastAPI()
@@ -55,11 +58,14 @@ async def get_user(data: UserData) -> dict:
     """
 
     item_dict = data.model_dump()
-    item_dict["permission"] = True
-    item_dict["expires"] = (datetime.now() + timedelta(hours=1)).strftime(
-        "%Y-%m-%d %H:%M"
-    )
-    return {**item_dict}
+
+    if item_dict["username"] in users:
+        item_dict["role"] = users[item_dict["username"]]["role"]
+        item_dict["permission"] = True
+        item_dict["expires"] = (datetime.now() + timedelta(hours=1)).strftime(
+            "%Y-%m-%d %H:%M"
+        )
+        return {**item_dict}
 
 
 if __name__ == "__main__":
