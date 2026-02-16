@@ -16,7 +16,7 @@ from pydantic import BaseModel
 
 from current_date import get_date
 
-with open("users.yaml") as f:
+with open("users.yaml", encoding="ascii") as f:
     users = yaml.safe_load(f)
 
 
@@ -53,7 +53,7 @@ async def get_user(data: UserData) -> dict:
     """
     Returns the user access permission data.
 
-    :param data: username and role
+    :param data: username
     :type data: dict
     """
 
@@ -65,7 +65,12 @@ async def get_user(data: UserData) -> dict:
         item_dict["expires"] = (datetime.now() + timedelta(hours=1)).strftime(
             "%Y-%m-%d %H:%M"
         )
-        return {**item_dict}
+    else:
+        item_dict["role"] = "Not authorized user!"
+        item_dict["permission"] = False
+        item_dict["expires"] = "-"
+
+    return {**item_dict}
 
 
 if __name__ == "__main__":
