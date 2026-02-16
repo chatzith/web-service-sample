@@ -4,3 +4,5 @@ guest:
   role: user
 support:
   role: administrator
+operator:
+  role: user
